@@ -27,10 +27,29 @@
 
   4. 【判斷平手】
       設計getEmptyPositions()
-        宣告allOccupiedPositions = []，傳入 positions內，所有玩家下棋的位置
-        比對棋盤上所有位置[1, 2, 3, 4, 5, 6, 7, 8, 9]，使用filter，篩選出，尚未被下的位置
+        宣告allOccupiedPositions = positions內，所有玩家下棋的位置
+        比對棋盤上所有位置[1, 2, 3, 4, 5, 6, 7, 8, 9]，使用filter，篩選出尚未被下的位置
+        回傳尚未被下的位置
   
-  5. 【確認勝利條件】
+  5. 【確認勝利/平手條件】
       設計checkWinningCondition()，傳入玩家
-        宣告 winningPlayer 
-        宣告 
+        宣告 winningPlayer = isPlayerWin(玩家)
+        若 winningPlayer 成立
+          return alert(`${player} player won!`); (獲勝)
+
+        若 getEmptyPositions().length === 0 成立
+          return alert("Tied!"); (平手)
+  
+  6. 【遊戲推進】
+      宣告 gameOverFlag 變數(初始值 false)，控制遊戲推進
+
+      修改checkWinningCondition()
+        若 某一方玩家勝利 成立
+          新增 gameOverFlag = true
+        
+        若 平手 成立
+          新增 gameOverFlag = true
+      
+      修改onCellClicked()
+        某一方玩家下棋後，
+          判斷是否 達成勝利/平手條件：呼叫checkWinningCondition()，傳入玩家
