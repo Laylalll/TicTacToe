@@ -17,20 +17,20 @@ const checkingLines = [
   [1, 5, 9],
   [3, 5, 7],
 ];
-let gameOverFlag = false //初始值，控制遊戲推進
+let clickingThrottle = false //初始值，控制遊戲推進
 
 // function
 function checkWinningCondition(player) {
   const winningPlayer = isPlayerWin(positions[player])
   if (winningPlayer) {
-    gameOverFlag = true
     return alert(`${player} player won !`)
   }
 
   if (getEmptyPositions().length === 0) {
-    gameOverFlag = true
     return alert('Tied !')
   }
+
+  clickingThrottle = false
 }
 
 function getEmptyPositions() {
@@ -56,17 +56,21 @@ function draw(position, shape) {
 }
 
 function onCellClicked(event) {
+  if (clickingThrottle) { return } //控制遊戲推進：棋盤無法點擊
+
   const position = Number(event.target.dataset.index);
 
   if (count % 2 === 0) {
     draw(position, 'circle')
     positions['circle'].push(position)
+    clickingThrottle = true
 
     setTimeout(() => checkWinningCondition('circle'), 500)
 
   } else {
     draw(position, 'cross')
     positions['cross'].push(position)
+    clickingThrottle = true
 
     setTimeout(() => checkWinningCondition('cross'), 500)
   }

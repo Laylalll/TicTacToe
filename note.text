@@ -31,7 +31,7 @@
         比對棋盤上所有位置[1, 2, 3, 4, 5, 6, 7, 8, 9]，使用filter，篩選出尚未被下的位置
         回傳尚未被下的位置
   
-  5. 【確認勝利/平手條件】
+  5. 【判斷遊戲是否結束(勝利 or 平手 or 遊戲繼續)】
       設計checkWinningCondition()，傳入玩家
         宣告 winningPlayer = isPlayerWin(玩家)
         若 winningPlayer 成立
@@ -40,8 +40,31 @@
         若 getEmptyPositions().length === 0 成立
           return alert("Tied!"); (平手)
   
-  6. 【遊戲推進】
-      宣告 gameOverFlag 變數(初始值 false)，控制遊戲推進
+  6. 【遊戲推進：公布結果】
+      修改onCellClicked()
+        某一方玩家下棋後，
+          判斷遊戲是否結束：setTimeout + 呼叫checkWinningCondition()，傳入玩家
+  
+  7. 【遊戲推進：控制流程】
+      宣告變數 clickingThrottle = false (初始值，控制遊戲推進)
+      
+      修改onCellClicked()
+        新增若 clickingThrottle = true {return} (棋盤無法點擊：判斷遊戲是否結束時、遊戲結束時)
+
+        某一方玩家下棋後，
+          新增 clickingThrottle = true
+      
+      修改checkWinningCondition()
+        新增 clickingThrottle = false
+
+  8. 【對手：改為電腦玩家】
+      修改onCellClicked()
+        if-else 條件判斷 改為 
+          由 setTimeout 呼叫 checkWinningCondition()後，
+          若 未達成勝利條件，直接自動由電腦下棋
+
+  9. 【遊戲推進：控制流程】
+      宣告 gameOverFlag = false 變數(初始值)，控制遊戲推進
 
       修改checkWinningCondition()
         若 某一方玩家勝利 成立
@@ -49,7 +72,3 @@
         
         若 平手 成立
           新增 gameOverFlag = true
-      
-      修改onCellClicked()
-        某一方玩家下棋後，
-          判斷是否 達成勝利/平手條件：呼叫checkWinningCondition()，傳入玩家
