@@ -20,6 +20,45 @@ const checkingLines = [
 let clickingThrottle = false //初始值，控制遊戲推進
 
 // function
+function computerMove() {
+  const drawingPosition = getMostValuePosition()
+  draw(drawingPosition, 'cross')
+  positions['cross'].push(drawingPosition)
+  clickingThrottle = true
+
+  checkWinningCondition('cross')
+}
+
+function getMostValuePosition() {
+  const emptyPositions = getEmptyPositions() //還能下的位置陣列
+  const defendPositions = [] //能夠防止玩家勝利的位置陣列
+
+  for (const hypothesisPosition of emptyPositions) {
+    const copiedCrossPositions = Array.from(positions['cross']) //電腦已下的位置陣列
+    const copiedCirclePositions = Array.from(positions['circle']) //玩家已下的位置陣列
+    copiedCrossPositions.push(hypothesisPosition)
+    copiedCirclePositions.push(hypothesisPosition)
+
+    if (isPlayerWin(copiedCrossPositions)) {
+      return hypothesisPosition
+    }
+
+    if (isPlayerWin(copiedCirclePositions)) {
+      defendPositions.push(hypothesisPosition)
+    }
+  }
+
+  if (defendPositions.length) {
+    return defendPositions[0]
+  }
+
+  if (emptyPositions.includes(5)) {
+    return 5
+  }
+
+  return emptyPositions[Math.floor(Math.random() * emptyPositions.length)]
+}
+
 function checkWinningCondition(player) {
   const winningPlayer = isPlayerWin(positions[player])
   if (winningPlayer) {
@@ -30,7 +69,7 @@ function checkWinningCondition(player) {
     return alert('Tied !')
   }
 
-  clickingThrottle = false
+  clickingThrottle = false // 遊戲繼續，未結束
 }
 
 function getEmptyPositions() {
@@ -56,26 +95,21 @@ function draw(position, shape) {
 }
 
 function onCellClicked(event) {
-  if (clickingThrottle) { return } //控制遊戲推進：棋盤無法點擊
+  if (clickingThrottle) return //控制遊戲推進：棋盤無法點擊
 
   const position = Number(event.target.dataset.index);
 
-  if (count % 2 === 0) {
-    draw(position, 'circle')
-    positions['circle'].push(position)
-    clickingThrottle = true
+  draw(position, 'circle')
+  positions['circle'].push(position)
+  clickingThrottle = true
 
-    setTimeout(() => checkWinningCondition('circle'), 500)
+  setTimeout(() => {
+    checkWinningCondition('circle');
 
-  } else {
-    draw(position, 'cross')
-    positions['cross'].push(position)
-    clickingThrottle = true
-
-    setTimeout(() => checkWinningCondition('cross'), 500)
-  }
-
-  count++
+    if (!clickingThrottle) {
+      computerMove()
+    }
+  }, 500)
 }
 
 // executing
